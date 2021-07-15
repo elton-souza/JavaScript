@@ -1,11 +1,16 @@
 <!doctype html>
 <head>
     <meta charset="UTF-8">
-    <title>Testando pattern</title>
+    <title>REGEX</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <form>
-        <input pattern="[0-9]*">
-        <input type="submit" value="Enviar dados">
+        <label for="texto">Texto: </label>
+        <input id="texto" data-text>
+        <label for="regex">Regex: </label>
+        <input id="regex" data-rgx>
+        <input type="submit" value="Enviar dados" onclick="getData(event)">
     </form>
+    <script src="./main.js"></script>
 </body>
