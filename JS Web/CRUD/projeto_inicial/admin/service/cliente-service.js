@@ -1,6 +1,6 @@
 // realiza a comunicação com o servidor e retorna a lista de cliente cadastrados
 const listaClientes = () =>{
-    return fetch('http://localhost:3000/profile') // faz um get e devolve uma promise
+    return fetch('http://localhost:3000/profile') // faz um get(padrao) e devolve uma promise
     .then(resposta =>{ // trabalhando com a resposta
         return resposta.json() // transforma a resposta de texto em um objeto javascript válido
         
