@@ -1,27 +1,43 @@
-const tabela = document.querySelector('[data-tabela]')
-
-function criaNovaLinha(nome,email){
-    const linhaNovoCliente = document.createElement('tr')
-    const conteudo = `<td class="td" data-td>${nome}</td>
-    <td>${email}</td>
-    <td>
-        <ul class="tabela__botoes-controle">
-            <li><a href="../telas/edita_cliente.html" class="botao-simples botao-simples--editar">Editar</a></li>
-            <li><button class="botao-simples botao-simples--excluir" type="button">Excluir</button></li>
-        </ul>
-    </td>`
-    linhaNovoCliente.innerHTML = conteudo
-    return linhaNovoCliente
-}
-
+// realiza a comunicação com o servidor e retorna a lista de cliente cadastrados
 const listaClientes = () =>{
     return fetch('http://localhost:3000/profile') // faz um get e devolve uma promise
-    .then(answer =>{ // trabalhando com a resposta
-        const resposta = answer.json() // transforma a resposta de texto em um objeto javascript válido
-        console.log(resposta)
-        return resposta 
+    .then(resposta =>{ // trabalhando com a resposta
+        return resposta.json() // transforma a resposta de texto em um objeto javascript válido
+        
+    }) 
+}
+// realiza a comunicação com o servidor e adiciona um novo cliente
+const criaCliente = (cliente, cliente_email) =>{
+    return fetch('http://localhost:3000/profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({
+            nome: cliente,
+            email: cliente_email
+        })
+    
     })
+    .then(resposta=>{
+        return resposta.body
+    })
+}
+// Realiza a comunicação com o servidor e logo em seguida delete o cliente pelo ID
+const removeCliente = (id) =>{
+    return fetch(`http://localhost:3000/profile/${id}`, {
+        method: 'DELETE'
+    })
+}
 
+// objeto que contem todos os serviços
+export const clienteService = {
+    listaClientes,
+    criaCliente,
+    removeCliente
+}
+
+//================================================
     // const promise = new Promise((resolve,reject)=>{
     //     const http = new XMLHttpRequest() // Objeto que fornece métodos para a comunicação
 
@@ -37,12 +53,4 @@ const listaClientes = () =>{
 
     //     http.send() // Envia a requisição para o servidor
     // })
-    // return promise 
-}
-
-listaClientes()
-.then(data => { //referencia a listaClientes()
-    data.forEach(cliente=>{
-        tabela.appendChild(criaNovaLinha(cliente.nome,cliente.email))
-    })
-})
+    // return promise
