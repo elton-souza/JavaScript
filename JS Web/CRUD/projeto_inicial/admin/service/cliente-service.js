@@ -6,7 +6,7 @@ const listaClientes = () =>{
         
     }) 
 }
-// realiza a comunicação com o servidor e adiciona um novo cliente
+// realiza a comunicação com o servidor e adiciona um novo cliente através do verbo HTTP 'POST'
 const criaCliente = (cliente, cliente_email) =>{
     return fetch('http://localhost:3000/profile', {
         method: 'POST',
@@ -23,18 +23,43 @@ const criaCliente = (cliente, cliente_email) =>{
         return resposta.body
     })
 }
-// Realiza a comunicação com o servidor e logo em seguida delete o cliente pelo ID
+// Realiza a comunicação com o servidor e logo em seguida deletea o cliente pelo ID atraves do verbo HTTP 'DELETE'
 const removeCliente = (id) =>{
     return fetch(`http://localhost:3000/profile/${id}`, {
         method: 'DELETE'
     })
 }
-
+//Realiza a comunicação com o servidor e retorna os dados do cliente de acordo com o ID 
+const detalhaCliente = (id) =>{
+    return fetch(`http://localhost:3000/profile/${id}`)
+    .then(resposta =>{
+        return resposta.json() 
+        
+    }) 
+}
+//Realiza a comunicação com o servidor e retorna os dados do cliente de acordo com o ID e possibilita a edição dos dados do cliente através do verbo HTTP 'PUT'
+const atualizaCliente = (id,nome,email) =>{
+    return fetch(`http://localhost:3000/profile/${id}`,{
+        method: 'PUT',
+        headers: {
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+            nome:nome,
+            email:email
+        })
+    })
+    .then(respota =>{
+        return respota.json()
+    })
+}
 // objeto que contem todos os serviços
 export const clienteService = {
     listaClientes,
     criaCliente,
-    removeCliente
+    removeCliente,
+    detalhaCliente,
+    atualizaCliente
 }
 
 //================================================

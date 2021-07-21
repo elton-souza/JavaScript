@@ -1,9 +1,14 @@
 {
   "profile": [
     {
-      "nome": "elton",
+      "nome": "elton souza",
       "email": "elton@email.com",
       "id": 1
+    },
+    {
+      "nome": "elton santos",
+      "email": "eltonsantos@email.com",
+      "id": 2
     }
   ]
 }
