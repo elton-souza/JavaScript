@@ -16,27 +16,40 @@ function criaNovaLinha(nome,email, id){
         </ul>
     </td>`
     linhaNovoCliente.innerHTML = conteudo
-    linhaNovoCliente.dataset.id = id
+    linhaNovoCliente.dataset.id = id //adiciona um data attributes
     return linhaNovoCliente
 }
 // Exclui o cliente ao clicar no botão deletar de acordo com seu ID
-tabela.addEventListener('click', (evento)=>{  
+tabela.addEventListener('click', async (evento)=>{  
     let botaoDeletar = evento.target.className === 'botao-simples botao-simples--excluir'
     if(botaoDeletar){
-        const linhaCliente = evento.target.closest('[data-id]')
-        let id = linhaCliente.dataset.id
-        clienteService.removeCliente(id)
-        .then(()=>{
+        //tenta executar o codigo, se der algum erro ele redireciona para a pagina de erro
+        try{
+            const linhaCliente = evento.target.closest('[data-id]')
+            let id = linhaCliente.dataset.id
+            await clienteService.removeCliente(id)
             linhaCliente.remove()
-        })
+        }
+        catch(erro){
+            console.log(erro)
+            window.location.href = '../telas/erro.html'
+        }
     }
-
 })
 
 //Chamando a função que comunica com o servidor e executando uma função a partir dados recebidos
-clienteService.listaClientes()
-.then(data => { //referencia a listaClientes()
-    data.forEach(cliente=>{
-        tabela.appendChild(criaNovaLinha(cliente.nome,cliente.email, cliente.id))
-    })
-})
+const render = async() =>{
+    //tenta executar o codigo, se der algum erro ele redireciona para a pagina de erro
+    try{
+        const listaClientes = await clienteService.listaClientes()
+        console.log(listaClientes)
+        listaClientes.forEach(cliente=>{
+            tabela.appendChild(criaNovaLinha(cliente.nome,cliente.email, cliente.id))
+        })
+    }
+    catch(erro){
+        console.log(erro)
+        window.location.href = '../telas/erro.html'
+    }
+}
+render()

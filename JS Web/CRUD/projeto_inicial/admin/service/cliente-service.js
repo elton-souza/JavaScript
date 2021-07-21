@@ -2,8 +2,10 @@
 const listaClientes = () =>{
     return fetch('http://localhost:3000/profile') // faz um get(padrao) e devolve uma promise
     .then(resposta =>{ // trabalhando com a resposta
-        return resposta.json() // transforma a resposta de texto em um objeto javascript válido
-        
+        if(resposta.ok){
+            return resposta.json() // transforma a resposta de texto em um objeto javascript válido
+        }
+        throw new Error('Não foi possível listar os clientes')
     }) 
 }
 // realiza a comunicação com o servidor e adiciona um novo cliente através do verbo HTTP 'POST'
@@ -20,21 +22,30 @@ const criaCliente = (cliente, cliente_email) =>{
     
     })
     .then(resposta=>{
-        return resposta.body
+        if(resposta.ok){
+            return resposta.body
+        }
+        throw new Error('Não foi possível criar um novo cliente')
     })
 }
 // Realiza a comunicação com o servidor e logo em seguida deletea o cliente pelo ID atraves do verbo HTTP 'DELETE'
 const removeCliente = (id) =>{
     return fetch(`http://localhost:3000/profile/${id}`, {
         method: 'DELETE'
+    }).then(resposta =>{
+        if(!resposta.ok){ // Se a requisição não der certo, ele não remove o cliente..
+            throw new Error('Não foi possível deletar o cliente')
+        }
     })
 }
 //Realiza a comunicação com o servidor e retorna os dados do cliente de acordo com o ID 
 const detalhaCliente = (id) =>{
     return fetch(`http://localhost:3000/profile/${id}`)
     .then(resposta =>{
-        return resposta.json() 
-        
+        if(resposta.ok){
+            return resposta.json() 
+        }
+        throw new Error('Não foi possível detalhar o cliente')
     }) 
 }
 //Realiza a comunicação com o servidor e retorna os dados do cliente de acordo com o ID e possibilita a edição dos dados do cliente através do verbo HTTP 'PUT'
@@ -50,7 +61,10 @@ const atualizaCliente = (id,nome,email) =>{
         })
     })
     .then(respota =>{
-        return respota.json()
+        if(respota.ok){
+            return respota.json()
+        }
+        throw new Error('Não foi possível editar os dados do cliente')
     })
 }
 // objeto que contem todos os serviços
