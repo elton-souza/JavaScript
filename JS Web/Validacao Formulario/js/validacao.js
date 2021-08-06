@@ -38,12 +38,30 @@ const mensagensDeErro = {
     cpf:{
         valueMissing: 'O campo de CPF não pode estar vazio',
         customError: 'O CPF digitado não é válido'
+    },
+    cep:{
+        valueMissing: 'O campo de CEP não pode estar vazio',
+        patternMismatch: 'O CEP digitado não é válido',
+        customError: 'Não foi possível buscar o CEP'
+    },
+    logradouro:{
+        valueMissing: 'O campo de logradouro não pode estar vazio.',
+    },
+    cidade:{
+        valueMissing: 'O campo de cidade não pode estar vazio.',
+    },
+    estado:{
+        valueMissing: 'O campo de estado não pode estar vazio.',
+    },
+    preco:{
+        valueMissing:'O campo de preço não pode estar vazio.' 
     }
 } 
 
 const validadores ={ 
     dataNascimento: input => validaDataNascimento(input),
-    cpf:input => validaCPF(input)
+    cpf:input => validaCPF(input),
+    cep:input => recuperarCEP(input)
 }
 
 function mostraMensagemErro(tipoDeInput, input){
@@ -103,31 +121,56 @@ function checaCPFRepetido(cpf){
     })
     return cpfValido
 }
-
-function checaEstruturaCPF(cpf){
-    const multiplicador = 11
+function checaEstruturaCPF(cpf) {
+    const multiplicador = 10
 
     return checaDigitoVerificador(cpf, multiplicador)
 }
-function checaDigitoVerificador(cpf, multiplicador){
-    if(multiplicador >= 12){
-        return true 
-    }
-    const multiplicadorInicial = multiplicador
-    let soma = 0
-    const cpfSemDigitos = cpf.substr(0,multiplicador - 1).split('')
-    const digitoVerificador = cpf.charAt(multiplicador - 1)
-    for(let cont = 0; multiplicadorInicial > 1; multiplicadorInicial-1){
-        soma = soma + cpfSemDigitos[cont] * multiplicadorInicial
-        cont++
+
+function checaDigitoVerificador(cpf, multiplicador) {
+    if(multiplicador >= 12) {
+        return true
     }
 
-    if(digitoVerificador == confirmaDigito(soma)){
+    let multiplicadorInicial = multiplicador
+    let soma = 0
+    const cpfSemDigitos = cpf.substr(0, multiplicador - 1).split('')
+    const digitoVerificador = cpf.charAt(multiplicador - 1)
+    for(let contador = 0; multiplicadorInicial > 1 ; multiplicadorInicial--) {
+        soma = soma + cpfSemDigitos[contador] * multiplicadorInicial
+        contador++
+    }
+
+    if(digitoVerificador == confirmaDigito(soma)) {
         return checaDigitoVerificador(cpf, multiplicador + 1)
     }
 
     return false
 }
-function confirmaDigito(soma){
-    return 11 - (soma%11)
+
+function confirmaDigito(soma) {
+    return 11 - (soma % 11)
+}
+
+function recuperarCEP(input){
+    const cep = input.value.replace(/\D/g, '')
+    const url = `https://viacep.com.br/ws/${cep}/json/`
+    
+    if(!input.validity.patternMismatch && !input.validity.valueMissing){
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if(data.erro){
+                input.setCustomValidity('Não foi possível buscar o CEP')
+                return
+            }
+
+            input.setCustomValidity('')
+
+            document.querySelector('[data-tipo="logradouro"]').value = data.logradouro
+            document.querySelector('[data-tipo="cidade"]').value = data.localidade
+            document.querySelector('[data-tipo="estado"]').value = data.uf
+
+        })
+    }
 }
